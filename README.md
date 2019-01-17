@@ -6,7 +6,7 @@ Docker container `0dd1a5d0a4e5`.
 
 ## Usage
 
-1. Preprocess `path/to/data.bag` files in parallel:
+Preprocess `path/to/data.bag` files in parallel:
 
 ```
 python preprocessing/main.py
@@ -25,7 +25,9 @@ Aftre running this, we get `path/to/data.h5` files which contain:
 - **robot_cart**: Full information of tip_pose, [timestamp, x, y, z, ?, ?, ?], (N_tp, 7)
 - **robot_joints**: The rotation of each joint of the robot, (N_tp, 7)
 
-2. Synchronize the data in parallel since different sensors have different frequency:
+---
+
+Synchronize the data in parallel since different sensors have different frequency:
 
 ```
 python preprocessing/sync.py
