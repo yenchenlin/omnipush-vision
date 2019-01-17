@@ -10,16 +10,16 @@ python preprocessing/main.py
 
 Aftre running this, we get `path/to/data.h5` files which contain:
 
-- RGB_images: RGB images of a push, (N_RGB, 720, 1280, 3)
-- RGB_time: Timestamp correspond to RGB images, (N_RGB)
-- RGB_info: ?
-- depth_images: Depth images of a push, (N_depth, 720, 1280)
-- depth_time: Timestamp correspond to depth images, (N_depth)
-- depth_info: ?
-- object_pose: Timestamp and the pose of pushed object, [timestamp, x, y, yaw], (N_op, 4)
-- tip_pose: Timestamp and the pose of pusher, [timestamp, x, y, yaw], (N_tp, 4)
-- robot_cart: Full information of tip_pose, [timestamp, x, y, z, ?, ?, ?], (N_tp, 7)
-- robot_joints: The rotation of each joint of the robot, (N_tp, 7)
+- **RGB_images**: RGB images of a push, (N_RGB, 720, 1280, 3)
+- **RGB_time**: Timestamp correspond to RGB images, (N_RGB)
+- **RGB_info**: ?
+- **depth_images**: Depth images of a push, (N_depth, 720, 1280)
+- **depth_time**: Timestamp correspond to depth images, (N_depth)
+- **depth_info**: ?
+- **object_pose**: Timestamp and the pose of pushed object, [timestamp, x, y, yaw], (N_op, 4)
+- **tip_pose**: Timestamp and the pose of pusher, [timestamp, x, y, yaw], (N_tp, 4)
+- **robot_cart**: Full information of tip_pose, [timestamp, x, y, z, ?, ?, ?], (N_tp, 7)
+- **robot_joints**: The rotation of each joint of the robot, (N_tp, 7)
 
 ## Questions
 
