@@ -1,8 +1,12 @@
 # omnipush-vision
 
+## Setup
+
+Docker container `0dd1a5d0a4e5`.
+
 ## Usage
 
-Preprocess `path/to/data.bag` files in parallel:
+1. Preprocess `path/to/data.bag` files in parallel:
 
 ```
 python preprocessing/main.py
@@ -20,6 +24,15 @@ Aftre running this, we get `path/to/data.h5` files which contain:
 - **tip_pose**: Timestamp and the pose of pusher, [timestamp, x, y, yaw], (N_tp, 4)
 - **robot_cart**: Full information of tip_pose, [timestamp, x, y, z, ?, ?, ?], (N_tp, 7)
 - **robot_joints**: The rotation of each joint of the robot, (N_tp, 7)
+
+2. Synchronize the data in parallel since different sensors have different frequency:
+
+```
+python preprocessing/sync.py
+```
+
+Aftre running this, we get `path/to/data_sync.h5` files which trim the value of every sensor to have the same value as **depth_images** on dimension 0 since **depth_images** has the lowest frequency.
+
 
 ## Questions
 
