@@ -3,24 +3,19 @@ import glob
 import os
 import copy
 import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
-from open3d import *
+import cv2
 from tqdm import tqdm
 
 
 DATASET_PATH = '/data/vision/phillipi/gen-models/TAKE_THIS_straight_push_all_shapes_no_weight/abs/'
 sync_h5_filepaths = glob.glob(os.path.join(DATASET_PATH, '***/**/*_sync.h5'))
-CHECK_PATH = './check'
-if not os.path.exists(CHECK_PATH):
-    os.mkdir(CHECK_PATH)
+OUTPUT_PATH = './dataset'
+if not os.path.exists(OUTPUT_PATH):
+    os.mkdir(OUTPUT_PATH)
 
 
-# TODO: modify later
-dt = 1
-
-
-WORLD_FRAME = False
+dt = 1  # Useless right now since the final frame repeat after 1 second
+WORLD_FRAME = True
 
 
 def rotate(x, theta):
@@ -31,9 +26,11 @@ def rotate(x, theta):
     return x_rotated
 
 
+X = []
+Y = []
 for fp in tqdm(sync_h5_filepaths):
     src = h5py.File(fp, 'r')
-    tar = fp.replace('.h5', '.png').split('/')[-1]
+    name = fp.replace('.h5', '').split('/')[-1]
     theta = src['object_pose'][0][3]
 
     """ Output (displacement)
@@ -47,7 +44,7 @@ for fp in tqdm(sync_h5_filepaths):
         delta_object_pose += 2 * np.pi
     if abs(delta_object_pose[2]) > np.pi/4:  # Due to Vicon tracker errors
         print("Vicon tracker errors")
-        exit()
+        continue
 
     # Rotate x, y to object's reference frame
     if not WORLD_FRAME:
@@ -73,36 +70,27 @@ for fp in tqdm(sync_h5_filepaths):
     relative_tip_pose[0:2] = relative_tip_xy
     relative_tip_pose[2] = relative_tip_theta / np.pi * 180.0
 
-    """ Process depth image
+    """ Create dataset
     """
-    # rgbd_image_start = create_rgbd_image_from_color_and_depth(
-    #     Image(src['RGB_images'][0]), Image(src['depth_images'][0]))
-    # rgbd_image_end = create_rgbd_image_from_color_and_depth(
-    #     Image(src['RGB_images'][-1]), Image(src['depth_images'][-1]))
+    dsize = (128, 72)
 
-    """ Draw
-    """
-    DIR = os.path.join(CHECK_PATH, fp.replace('.h5', '').split('/')[-1])
-    if not os.path.exists(DIR):
-        os.mkdir(DIR)
-    for i in range(src['RGB_images'].shape[0]):
-        fig = plt.figure()
-        st = fig.suptitle('$\Delta$ obj: {},\n Rel tip: {}'.format(
-            np.around(delta_object_pose, decimals=2),
-            np.around(relative_tip_pose, decimals=2)))
-        plt.imshow(src['RGB_images'][i])
-        plt.savefig(os.path.join(DIR, '{}.png'.format(i)))
-        plt.close()
-    # fig = plt.figure()
-    # st = fig.suptitle('$\Delta$ obj: {},\n Rel tip: {}'.format(
-    #     np.around(delta_object_pose, decimals=2),
-    #     np.around(relative_tip_pose, decimals=2)))
-    # plt.subplot(2, 2, 1)
-    # plt.imshow(src['RGB_images'][0])
-    # plt.subplot(2, 2, 2)
-    # plt.imshow(rgbd_image_start.depth)
-    # plt.subplot(2, 2, 3)
-    # plt.imshow(src['RGB_images'][-1])
-    # plt.subplot(2, 2, 4)
-    # plt.imshow(rgbd_image_end.depth)
-    # plt.savefig(os.path.join(CHECK_PATH, tar))
+    x = {}
+    x['RGB_image'] = cv2.resize(
+        src['RGB_images'][0], dsize=dsize, interpolation=cv2.INTER_CUBIC)
+    x['depth_image'] = cv2.resize(
+        src['depth_images'][0], dsize=dsize, interpolation=cv2.INTER_CUBIC)
+    x['action'] = relative_tip_pose
+    x['name'] = name
+    X.append(x)
+
+    y = {}
+    y['RGB_image'] = cv2.resize(
+        src['RGB_images'][-1], dsize=dsize, interpolation=cv2.INTER_CUBIC)
+    y['depth_image'] = cv2.resize(
+        src['depth_images'][-1], dsize=dsize, interpolation=cv2.INTER_CUBIC)
+    y['displacement'] = delta_object_pose
+    y['name'] = name
+    Y.append(y)
+
+np.save(os.path.join(OUTPUT_PATH, 'X.npy'), X)
+np.save(os.path.join(OUTPUT_PATH, 'Y.npy'), Y)
