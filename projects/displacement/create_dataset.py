@@ -5,6 +5,7 @@ import copy
 import numpy as np
 import cv2
 from tqdm import tqdm
+from sklearn.utils import shuffle
 
 
 DATASET_PATH = '/data/vision/phillipi/gen-models/TAKE_THIS_straight_push_all_shapes_no_weight/abs/'
@@ -92,5 +93,14 @@ for fp in tqdm(sync_h5_filepaths):
     y['name'] = name
     Y.append(y)
 
-np.save(os.path.join(OUTPUT_PATH, 'X.npy'), X)
-np.save(os.path.join(OUTPUT_PATH, 'Y.npy'), Y)
+
+N_train = 8000
+X, Y = shuffle(np.array(X), np.array(Y), random_state=0)
+X_train = X[:N_train]
+Y_train = Y[:N_train]
+X_test = X[N_train:]
+Y_test = Y[N_train:]
+np.save(os.path.join(OUTPUT_PATH, 'X_train.npy'), X_train)
+np.save(os.path.join(OUTPUT_PATH, 'Y_train.npy'), Y_train)
+np.save(os.path.join(OUTPUT_PATH, 'X_test.npy'), X_test)
+np.save(os.path.join(OUTPUT_PATH, 'Y_test.npy'), Y_test)
