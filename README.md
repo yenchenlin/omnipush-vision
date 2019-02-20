@@ -12,9 +12,15 @@ docker attach 0dd1a5d0a4e5
 ```
 
 ## Usage
+If processing new dataset, change its permision:
+```
+chmod -R path/to/data
+```
 
 Preprocess `path/to/data.bag` files in parallel:
 
+1. Modify `DATA_DIR` in `/gen-models/omnipush-vision/preprocessing/main.py`.
+2. Run
 ```
 python /gen-models/omnipush-vision/preprocessing/main.py
 ```
