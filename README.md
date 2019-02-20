@@ -2,7 +2,14 @@
 
 ## Setup
 
-Docker container `0dd1a5d0a4e5`.
+First, ssh onto visiongpu06 (**Note**: it should be exactly this instance).
+
+Next, attach docker container `0dd1a5d0a4e5`.
+
+```
+docker start 0dd1a5d0a4e5
+docker attach 0dd1a5d0a4e5
+```
 
 ## Usage
 
