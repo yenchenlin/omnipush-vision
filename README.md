@@ -16,7 +16,7 @@ docker attach 0dd1a5d0a4e5
 Preprocess `path/to/data.bag` files in parallel:
 
 ```
-python preprocessing/main.py
+python /gen-models/omnipush-vision/preprocessing/main.py
 ```
 
 Aftre running this, we get `path/to/data.h5` files which contain:
