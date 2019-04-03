@@ -46,7 +46,7 @@ Synchronize the data in parallel since different sensors have different frequenc
 python preprocessing/sync.py
 ```
 
-Aftre running this, we get `path/to/data_sync.h5` files which trim the value of every sensor to have the same value as **depth_images** on dimension 0 since **depth_images** has the lowest frequency.
+Aftre running this, we get `path/to/data_sync.h5` files which trim the amount of samples from every sensor to have the same value as **depth_images** on dimension 0 since **depth_images** has the lowest frequency.
 
 
 ## Questions
