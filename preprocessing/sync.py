@@ -32,12 +32,16 @@ def sync_data(h5_filepath):
     time = {}
     time['depth_time'] = src['depth_time']
     time['RGB_time'] = src['RGB_time']
-    time['object_pose'] = src['object_pose'][:, 0]
+    try:
+        time['object_pose'] = src['object_pose'][:, 0]
+    except:
+        print('Skipping {} due to uncomplete data.'.format(h5_filepath))
+        return
     time['tip_pose'] = src['tip_pose'][:, 0]
     time['robot_cart'] = src['robot_cart'][:, 0]
     time['robot_joints'] = src['robot_joints'][:, 0]
 
-    # Make sure depth has least values along time
+     # Make sure depth has least values along time
     for field in FIELDS:
         assert time['depth_time'].shape[0] <= time[field].shape[0] + 1
         # Add 1 because one push's # of RGB images == # of depth images - 1
@@ -71,9 +75,22 @@ def sync_data(h5_filepath):
         f.create_dataset('RGB_time', data=data['RGB_time'])
 
 
-DATASET_PATH = '/gen-models/TAKE_THIS_straight_push_all_shapes_no_weight/abs/'
+DATASET_PATH = '/gen-models/push_with_weight/straight_push_shapes_with_1_weight/abs'
+
+# Get .h5 filepaths except _sync.h5 filepaths
 h5_filepaths = glob.glob(os.path.join(DATASET_PATH, '***/**/*.h5'))
-# for h5_filepath in tqdm(h5_filepaths):
-#     sync_data(h5_filepath)
-Parallel(n_jobs=20)(delayed(sync_data)(fp) for fp in tqdm(h5_filepaths))
-print(h5_filepaths)
+sync_h5_filepaths = glob.glob(os.path.join(DATASET_PATH, '***/**/*_sync.h5'))
+h5_filepaths = [fp for fp in h5_filepaths if fp not in sync_h5_filepaths]
+
+# Get un-sync .h5 filepaths
+sync_h5_filepaths = [fp.replace('.h5', '_sync.h5') for fp in h5_filepaths]
+unfinished_h5_filepaths = []
+for sync_fp, fp in zip(sync_h5_filepaths, h5_filepaths):
+    if not os.path.exists(sync_fp):
+        unfinished_h5_filepaths.append(fp)
+
+print("{}/{} h5 files un-sync.".format(len(unfinished_h5_filepaths), len(h5_filepaths)))
+
+#for fp in tqdm(unfinished_h5_filepaths):
+#     sync_data(fp)
+Parallel(n_jobs=20)(delayed(sync_data)(fp) for fp in tqdm(unfinished_h5_filepaths))
