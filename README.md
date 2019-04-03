@@ -48,6 +48,15 @@ python preprocessing/sync.py
 
 Aftre running this, we get `path/to/data_sync.h5` files which trim the amount of samples from every sensor to have the same value as **depth_images** on dimension 0 since **depth_images** has the lowest frequency.
 
+---
+
+To generate dataset for sub-task, run
+
+```
+python [TASK]/gen_dataset.py
+```
+
+where `[TASK]` can be `video_prediction` | `segmentation`.
 
 ## Questions
 
