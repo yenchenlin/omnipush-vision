@@ -45,6 +45,7 @@ def main(argv):
     global depth_images
     global color_times
     global depth_times
+    depth_info = None
     tip_array = []
     object_pose_array = []
     CartState = []
@@ -171,7 +172,6 @@ def main(argv):
         with open(json_filepath, 'w') as outfile:
             json.dump(data, outfile, indent=4)
 
-
     # save the data as hdf5
     if opt.h5:
         with h5py.File(hdf5_filepath, "w") as f:
@@ -203,6 +203,8 @@ def parse_bagfile(filepath):
     global depth_images
     global color_times
     global depth_times
+    depth_info = None
+    color_info = None
     tip_array = []
     object_pose_array = []
     CartState = []
@@ -228,6 +230,8 @@ def parse_bagfile(filepath):
     bag_filepath = filepath
     json_filepath = bag_filepath.replace('.bag', '.json')
     hdf5_filepath = bag_filepath.replace('.bag', '.h5')
+    if os.path.exists(hdf5_filepath):
+        return
     print 'bag_filepath:', bag_filepath
     # if opt.json:
     #     print 'json_filepath:', json_filepath
@@ -329,17 +333,20 @@ def parse_bagfile(filepath):
 
     # save the data as hdf5
     if opt.h5:
-        with h5py.File(hdf5_filepath, "w") as f:
-            f.create_dataset("tip_pose", data=tip_array)
-            f.create_dataset("object_pose", data=object_pose_array)
-            f.create_dataset("robot_cart", data=CartState)
-            f.create_dataset("robot_joints", data=JointState)
-            f.create_dataset("RGB_info", data=color_info)
-            f.create_dataset("depth_info", data=depth_info)
-            f.create_dataset("RGB_images", data=color_images)
-            f.create_dataset("depth_images", data=depth_images)
-            f.create_dataset("RGB_time", data=color_times)
-            f.create_dataset("depth_time", data=depth_times)
+        if not os.path.exists(hdf5_filepath):
+            with h5py.File(hdf5_filepath, "w") as f:
+                f.create_dataset("tip_pose", data=tip_array)
+                f.create_dataset("object_pose", data=object_pose_array)
+                f.create_dataset("robot_cart", data=CartState)
+                f.create_dataset("robot_joints", data=JointState)
+                if color_info is not None:
+                    f.create_dataset("RGB_info", data=color_info)
+                if depth_info is not None:
+                    f.create_dataset("depth_info", data=depth_info)
+                f.create_dataset("RGB_images", data=color_images)
+                f.create_dataset("depth_images", data=depth_images)
+                f.create_dataset("RGB_time", data=color_times)
+                f.create_dataset("depth_time", data=depth_times)
 
 
 if __name__=='__main__':
