@@ -7,8 +7,8 @@ from tqdm import tqdm
 from joblib import Parallel, delayed
 
 
-DATASET_PATH = '/data/vision/phillipi/gen-models/TAKE_THIS_straight_push_all_shapes_no_weight/abs'
-OUTPUT_PATH = '/data/vision/phillipi/gen-models/svg/dataset/omnipush_ac'
+DATASET_PATH = '/data/vision/phillipi/gen-models/push_with_weight/straight_push_shapes_with_1_weight/abs'
+OUTPUT_PATH = '/data/vision/phillipi/gen-models/svg/dataset/omnipush_1_weight_ac'
 LENGTH = 12
 DSIZE = (64, 64)
 N_TEST_PER_SHAPE = 20
@@ -20,7 +20,10 @@ sync_h5_filepaths = sorted(
 
 
 def extract_imgs(sync_h5_filepath):
-    sync_h5 = h5py.File(sync_h5_filepath, 'r')
+    try:
+        sync_h5 = h5py.File(sync_h5_filepath, 'r')
+    except:
+        return
     shape = sync_h5_filepath.split('/abs/')[1].split('/')[0]
     meta = sync_h5_filepath.split('/')[-1].replace('_sync.h5', '')
 
@@ -29,13 +32,22 @@ def extract_imgs(sync_h5_filepath):
         os.makedirs(dir_train)
 
     # action's yaw
-    tip_vel = (sync_h5['tip_pose'][-1][1:3] - sync_h5['tip_pose'][0][1:3]) / 1
+    try:
+        tip_vel = (sync_h5['tip_pose'][-1][1:3] - sync_h5['tip_pose'][0][1:3]) / 1
+    except:
+        os.rmdir(dir_train)
+        return
     tip_theta = np.arctan2(tip_vel[1], tip_vel[0])
     actions = []
 
+
     for i in range(LENGTH):
         # image
-        img_cropped = sync_h5['RGB_images'][i][:, 280:1000, :]
+        try:
+            img_cropped = sync_h5['RGB_images'][i][:, 280:1000, :]
+        except:
+            os.rmdir(dir_train)
+            return
         img_resized = cv2.resize(img_cropped,
                                  dsize=DSIZE, interpolation=cv2.INTER_CUBIC)
         img_bgr = img_resized[:, :, ::-1]
@@ -50,19 +62,5 @@ def extract_imgs(sync_h5_filepath):
 
 
 Parallel(n_jobs=20)(delayed(extract_imgs)(fp) for fp in tqdm(sync_h5_filepaths))
-
-
-# create testing set
-shape_dirs = sorted(glob.glob(os.path.join(OUTPUT_PATH, 'train/**')))
-for shape_dir in shape_dirs:
-    dir_test = shape_dir.replace('train', 'test')
-    if not os.path.exists(dir_test):
-        os.makedirs(dir_test)
-
-    traj_dirs = sorted(glob.glob(os.path.join(shape_dir, '*')))
-    ids_test = np.random.choice(len(traj_dirs),
-                                size=N_TEST_PER_SHAPE,
-                                replace=False)
-    for id_test in ids_test:
-        os.rename(traj_dirs[id_test],
-                  traj_dirs[id_test].replace('train', 'test'))
+#for fp in tqdm(sync_h5_filepaths):
+#    extract_imgs(fp)
