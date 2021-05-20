@@ -2,14 +2,15 @@
 
 ## Setup
 
-First, ssh onto visiongpu06 (**Note**: it should be exactly this instance).
-
-Next, attach docker container `0dd1a5d0a4e5`.
-
+First, download and activate the docker image for data preprocessing:
 ```
-docker start 0dd1a5d0a4e5
-docker attach 0dd1a5d0a4e5
+docker pull yenchenlin1994/omnipush-vision
+docker run -dit -P --name omnipush -v path/to/omnipush:/data yenchenlin1994/omnipush-vision
+docker attach omnipush
 ```
+
+where `path/to/omnipush` is the path of the folder that contains `plywood`, `old`, and `old_plywood`.
+
 
 ## Usage
 If processing new dataset, change its permision:
