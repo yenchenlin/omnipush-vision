@@ -2,7 +2,16 @@
 
 ## Setup
 
-First, download and activate the docker image for data preprocessing:
+Clone this repo and put omnipush under `data`:
+```
+git clone git@github.com:yenchenlin/omnipush-vision.git
+mkdir data
+mv /path/to/plywood data
+mv /path/to/old data
+mv /path/to/old_plywood data
+```
+
+Then, download and activate the docker image for data preprocessing:
 ```
 docker pull yenchenlin1994/omnipush-vision
 docker run -dit -P --name omnipush -v path/to/omnipush:/data yenchenlin1994/omnipush-vision
