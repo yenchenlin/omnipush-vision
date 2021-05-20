@@ -14,11 +14,11 @@ mv /path/to/old_plywood data
 Then, download and activate the docker image for data preprocessing:
 ```
 docker pull yenchenlin1994/omnipush-vision
-docker run -dit -P --name omnipush -v path/to/omnipush:/data yenchenlin1994/omnipush-vision
+docker run -dit -P --name omnipush -v path/to/omnipush-vision:/omnipush-vision yenchenlin1994/omnipush-vision
 docker attach omnipush
 ```
 
-where `path/to/omnipush` is the path of the folder that contains `plywood`, `old`, and `old_plywood`.
+where `path/to/omnipush-vision` is the local path to this repo.
 
 
 ## Usage
