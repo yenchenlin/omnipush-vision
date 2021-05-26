@@ -62,10 +62,10 @@ Aftre running this, one can run `ls data/plywood/1a1a3a2a` and check whether we 
 python video_prediction/gen_dataset.py
 ```
 
-Now run `ls output` to observe the generated data. Each sub-push should consist of 12 frames with the corresponding action stored in numpy format.
+Now run `ls output` to observe the generated data. Each sub-push should consist of 40 frames with the corresponding action stored in numpy format.
 
 ## Questions
 
-- Why the length is shorter (12 frames) than the released dataset?
-  - I originally have scripts to stitch different sub-pushes, but they didn't work for `old`, `plywood`, and `old_plywood` :(
+- Why the length (40 frames) is longer than the released dataset (12 frames)?
+  - For the released data, I subsampled 12 out of 40 frames to form the dataset. 
 
