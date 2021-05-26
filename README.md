@@ -2,9 +2,10 @@
 
 ## Setup
 
-Clone this repo and put omnipush under `data`:
+Clone this repo and put [omnipush dataset](http://web.mit.edu/mcube/omnipush-dataset/) under `data`:
 ```
 git clone git@github.com:yenchenlin/omnipush-vision.git
+cd omnipush-vision
 mkdir data
 mv {/PATH/TO/plywood} data
 mv {/PATH/TO/old} data
