@@ -21,19 +21,9 @@ docker attach omnipush
 
 where `{PATH/TO/omnipush-vision}` is the path to this repo.
 
-
-## Usage
-If processing new dataset, change its permision:
 ```
-chmod -R path/to/data
-```
-
-Preprocess `path/to/data.bag` files in parallel:
-
-1. Modify `DATA_DIR` in `/gen-models/omnipush-vision/preprocessing/main.py`.
-2. Run
-```
-python /gen-models/omnipush-vision/preprocessing/main.py
+cd omnipush-vision
+python preprocessing/main.py
 ```
 
 Aftre running this, we get `path/to/data.h5` files which contain:
