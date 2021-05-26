@@ -6,19 +6,19 @@ Clone this repo and put omnipush under `data`:
 ```
 git clone git@github.com:yenchenlin/omnipush-vision.git
 mkdir data
-mv /path/to/plywood data
-mv /path/to/old data
-mv /path/to/old_plywood data
+mv {/PATH/TO/plywood} data
+mv {/PATH/TO/old} data
+mv {/PATH/TO/old_plywood} data
 ```
 
 Then, download and activate the docker image for data preprocessing:
 ```
 docker pull yenchenlin1994/omnipush-vision
-docker run -dit -P --name omnipush -v path/to/omnipush-vision:/omnipush-vision yenchenlin1994/omnipush-vision
+docker run -dit -P --name omnipush -v {PATH/TO/omnipush-vision}:/omnipush-vision yenchenlin1994/omnipush-vision
 docker attach omnipush
 ```
 
-where `path/to/omnipush-vision` is the local path to this repo.
+where `{PATH/TO/omnipush-vision}` is the path to this repo.
 
 
 ## Usage
