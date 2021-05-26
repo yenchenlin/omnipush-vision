@@ -16,6 +16,7 @@ Then, download and activate the docker image for data preprocessing:
 docker pull yenchenlin1994/omnipush-vision
 docker run -dit -P --name omnipush -v {PATH/TO/omnipush-vision}:/omnipush-vision yenchenlin1994/omnipush-vision
 docker attach omnipush
+[Press Enter to Continue]
 ```
 
 where `{PATH/TO/omnipush-vision}` is the path to this repo.
