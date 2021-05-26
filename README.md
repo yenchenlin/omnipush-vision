@@ -21,44 +21,49 @@ docker attach omnipush
 
 where `{PATH/TO/omnipush-vision}` is the path to this repo.
 
+## Usage
+
+### Step 1: extract the data from `*.bag` files
+
 ```
 cd omnipush-vision
 python preprocessing/main.py
 ```
 
-Aftre running this, we get `path/to/data.h5` files which contain:
+**Note**: one will probably see error messages by the end of this command, ignore them if the progress bar still forges ahead.
+The code will automatically discard damaged bag files.
+
+Aftre running this, one can run `ls data/plywood/1a1a3a2a` and check whether we have generated a `*.h5` file for each `*.bag` file.
+Each `*.h5` file contains the following information of a push:
 
 - **RGB_images**: RGB images of a push, (N_RGB, 720, 1280, 3)
 - **RGB_time**: Timestamp correspond to RGB images, (N_RGB)
-- **RGB_info**: ?
 - **depth_images**: Depth images of a push, (N_depth, 720, 1280)
 - **depth_time**: Timestamp correspond to depth images, (N_depth)
-- **depth_info**: ?
 - **object_pose**: Timestamp and the pose of pushed object, [timestamp, x, y, yaw], (N_op, 4)
 - **tip_pose**: Timestamp and the pose of pusher, [timestamp, x, y, yaw], (N_tp, 4)
-- **robot_cart**: Full information of tip_pose, [timestamp, x, y, z, ?, ?, ?], (N_tp, 7)
-- **robot_joints**: The rotation of each joint of the robot, (N_tp, 7)
 
 ---
 
-Synchronize the data in parallel since different sensors have different frequency:
+### Step 2: synchronize data from sensors with different frequencies
 
 ```
 python preprocessing/sync.py
 ```
 
-Aftre running this, we get `path/to/data_sync.h5` files which trim the amount of samples from every sensor to have the same value as **depth_images** on dimension 0 since **depth_images** has the lowest frequency.
+Aftre running this, one can run `ls data/plywood/1a1a3a2a` and check whether we have generated a `*_sync.h5` file for each `*.h5` file.
+`*_sync.h5` files contain synchrnized information of a push.
 
 ---
-
-To generate dataset for sub-task, run
+### Step 3: generate video prediction dataset
 
 ```
-python [TASK]/gen_dataset.py
+python video_prediction/gen_dataset.py
 ```
 
-where `[TASK]` can be `video_prediction` | `segmentation`.
+Now run `ls output` to observe the generated data. Each sub-push should consist of 12 frames with the corresponding action stored in numpy format.
 
 ## Questions
 
-- What [these lines](https://github.com/yenchenlin/omnipush-vision/blob/master/preprocessing/parse_bagfile_shapes.py#L119-L121) do to get the last dimension of tip_pose? 
+- Why the length is shorter (12 frames) than the released dataset?
+  - I originally have scripts to stitch different sub-pushes, but they didn't work for `old`, `plywood`, and `old_plywood` :(
