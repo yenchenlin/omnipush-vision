@@ -9,7 +9,7 @@ from joblib import Parallel, delayed
 
 DATASET_PATH = '/omnipush-vision/data/'
 OUTPUT_PATH = '/omnipush-vision/output/'
-LENGTH = 12
+LENGTH = 40
 DSIZE = (64, 64)
 N_TEST_PER_SHAPE = 20
 
