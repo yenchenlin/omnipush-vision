@@ -7,8 +7,8 @@ from tqdm import tqdm
 from joblib import Parallel, delayed
 
 
-DATASET_PATH = '/data/vision/phillipi/gen-models/push_with_weight/straight_push_shapes_with_1_weight/abs'
-OUTPUT_PATH = '/data/vision/phillipi/gen-models/svg/dataset/omnipush_1_weight_ac'
+DATASET_PATH = '/omnipush-vision/data/'
+OUTPUT_PATH = '/omnipush-vision/output/'
 LENGTH = 12
 DSIZE = (64, 64)
 N_TEST_PER_SHAPE = 20
@@ -24,7 +24,7 @@ def extract_imgs(sync_h5_filepath):
         sync_h5 = h5py.File(sync_h5_filepath, 'r')
     except:
         return
-    shape = sync_h5_filepath.split('/abs/')[1].split('/')[0]
+    shape = sync_h5_filepath.split('/data/')[1].split('/')[0]
     meta = sync_h5_filepath.split('/')[-1].replace('_sync.h5', '')
 
     dir_train = os.path.join(OUTPUT_PATH, 'train', shape, meta)

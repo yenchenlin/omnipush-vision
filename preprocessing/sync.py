@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 
 
-FIELDS = ['RGB_time', 'object_pose', 'tip_pose', 'robot_cart', 'robot_joints']
+FIELDS = ['RGB_time', 'object_pose', 'tip_pose', 'robot_cart'] # 'robot_joints']
 
 
 def argclosest(input_list, input_num):
@@ -39,7 +39,7 @@ def sync_data(h5_filepath):
         return
     time['tip_pose'] = src['tip_pose'][:, 0]
     time['robot_cart'] = src['robot_cart'][:, 0]
-    time['robot_joints'] = src['robot_joints'][:, 0]
+    # time['robot_joints'] = src['robot_joints'][:, 0]
 
      # Make sure depth has least values along time
     for field in FIELDS:
@@ -70,12 +70,12 @@ def sync_data(h5_filepath):
         f.create_dataset('tip_pose', data=data['tip_pose'])
         f.create_dataset('object_pose', data=data['object_pose'])
         f.create_dataset('robot_cart', data=data['robot_cart'])
-        f.create_dataset('robot_joints', data=data['robot_joints'])
+        # f.create_dataset('robot_joints', data=data['robot_joints'])
         f.create_dataset('RGB_images', data=data['RGB_images'])
         f.create_dataset('RGB_time', data=data['RGB_time'])
 
 
-DATASET_PATH = '/gen-models/push_with_weight/straight_push_shapes_with_1_weight/abs'
+DATASET_PATH = '/omnipush-vision/data/'
 
 # Get .h5 filepaths except _sync.h5 filepaths
 h5_filepaths = glob.glob(os.path.join(DATASET_PATH, '***/**/*.h5'))
@@ -91,6 +91,9 @@ for sync_fp, fp in zip(sync_h5_filepaths, h5_filepaths):
 
 print("{}/{} h5 files un-sync.".format(len(unfinished_h5_filepaths), len(h5_filepaths)))
 
-#for fp in tqdm(unfinished_h5_filepaths):
-#     sync_data(fp)
-Parallel(n_jobs=20)(delayed(sync_data)(fp) for fp in tqdm(unfinished_h5_filepaths))
+for fp in tqdm(unfinished_h5_filepaths):
+     try:
+         sync_data(fp)
+     except IOError:
+         print("Bad file: {}".format(fp))
+# Parallel(n_jobs=20)(delayed(sync_data)(fp) for fp in tqdm(unfinished_h5_filepaths))
